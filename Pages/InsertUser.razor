@@ -1,0 +1,48 @@
+﻿@page "/insert-user"
+@using BlazorApp.Data
+@using BlazorApp.Services
+@using Blazorise.DataGrid
+@inject RecordService RecordService
+@inject NavigationManager Navigation
+
+<h3>Insert User</h3>
+
+<div class="mb-3">
+    <label class="form-label">First Name:</label>
+    <input type="text" @bind="user.FirstName" class="form-control" style="width:23%; !important" />
+</div>
+<div class="mb-3">
+    <label class="form-label">Last Name:</label>
+    <input type="text" @bind="user.LastName" class="form-control" style="width:23%; !important" />
+</div>
+<div class="mb-3">
+    <label class="form-label">Email:</label>
+    <input type="email" @bind="user.Email" class="form-control" style="width:23%; !important" />
+</div>
+
+<button class="btn btn-primary" @onclick="SaveUser">Save</button>
+
+@if (message != null)
+{
+    <p class="text-success">@message</p>
+}
+
+@code {
+    private Record user = new Record();
+    private string? message;
+
+    private async Task SaveUser()
+    {
+        var success = await RecordService.InsertUserAsync(user);
+
+        if (success)
+        {
+            message = "User added successfully!";
+            user = new Record(); // Reset form after success
+        }
+        else
+        {
+            message = "Error inserting user.";
+        }
+    }
+}

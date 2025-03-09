@@ -1,0 +1,53 @@
+﻿@page "/edit-user/{id:int}"
+@using BlazorApp.Data
+@using BlazorApp.Services
+@inject RecordService RecordService
+@inject NavigationManager Navigation
+
+<h3>Edit User</h3>
+
+@if (user == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="mb-3">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-control" @bind="user.FirstName" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-control" @bind="user.LastName" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" @bind="user.Email" />
+    </div>
+
+    <button class="btn btn-primary" @onclick="UpdateUser">Save Changes</button>
+    <button class="btn btn-secondary ms-2" @onclick="Cancel">Cancel</button>
+}
+
+@code {
+    [Parameter] public int id { get; set; } // Get User ID from URL
+    private Record? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await RecordService.GetUserByIdAsync(id); // Fetch User
+    }
+
+    private async Task UpdateUser()
+    {
+        await RecordService.UpdateUserAsync(user!); // Call API to update
+        Navigation.NavigateTo("/Users"); // Redirect to users list
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/Users"); // Redirect without saving
+    }
+}
